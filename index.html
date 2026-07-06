@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tour de France 2026 — Stage Countdown</title>
+<meta name="description" content="Live countdown to every stage of the 2026 Tour de France, Barcelona to Paris.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #17140f;
+    --bg-soft: #1d1a14;
+    --surface: #221e18;
+    --surface-2: #2a251d;
+    --line: #3a3428;
+    --cream: #f2ecdc;
+    --muted: #9c9484;
+    --muted-dim: #6f6a5c;
+    --yellow: #ffd100;
+    --green: #7cc22c;
+    --red: #e2402f;
+    --blue: #6f93ad;
+    --rest: #736c5b;
+    --radius: 12px;
+    --font-display: 'Anton', sans-serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--yellow); outline-offset:3px;}
+
+  /* ---------- header ---------- */
+  .site-header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+    background:rgba(23,20,15,0.85);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); letter-spacing:0.5px; font-size:1.15rem;}
+  .brand svg{width:16px; height:22px; display:block;}
+  .brand small{display:block; font-family:var(--font-mono); font-weight:400; font-size:0.55rem; letter-spacing:2px; color:var(--muted); margin-top:-2px;}
+  .site-nav{display:flex; gap:22px; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px;}
+  .site-nav a{text-decoration:none; color:var(--muted); transition:color .15s;}
+  .site-nav a:hover{color:var(--yellow);}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:64px 24px 56px;
+    min-height:78vh;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    isolation:isolate;
+  }
+  .hero-art{position:absolute; inset:0; width:100%; height:100%; z-index:-2;}
+  .hero-fade{
+    position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(180deg, rgba(23,20,15,0.15) 0%, rgba(23,20,15,0.55) 55%, var(--bg) 96%);
+  }
+  .rider-dot{ animation: ride 6s ease-in-out infinite; transform-origin:center; }
+  @media (prefers-reduced-motion: reduce){ .rider-dot{animation:none;} }
+  @keyframes ride{
+    0%,100%{ transform:translate(0,0); }
+    50%{ transform:translate(-6px,-14px); }
+  }
+
+  .hero-content{max-width:820px;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:0.78rem; letter-spacing:2.5px; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .status-badge{
+    font-family:var(--font-mono); font-size:0.68rem; letter-spacing:1.5px; text-transform:uppercase;
+    padding:3px 9px; border-radius:999px; border:1px solid currentColor;
+  }
+  .status-live{color:var(--red);}
+  .status-live .liveping{width:6px; height:6px; border-radius:50%; background:var(--red); display:inline-block; margin-right:6px; animation:pulse 1.4s ease-in-out infinite;}
+  @media (prefers-reduced-motion: reduce){ .status-live .liveping{animation:none;} }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
+
+  h1.hero-title{
+    font-family:var(--font-display); text-transform:uppercase;
+    font-size:clamp(2.4rem, 7.5vw, 5.2rem); line-height:0.94; letter-spacing:0.5px;
+    margin:0 0 18px; color:var(--cream);
+  }
+  h1.hero-title .arrow{color:var(--yellow);}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px;}
+  .pill{
+    font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px;
+    padding:5px 12px; border-radius:999px; border:1px solid currentColor;
+  }
+  .pill-flat{color:var(--green); background:rgba(124,194,44,0.1);}
+  .pill-hilly{color:var(--yellow); background:rgba(255,209,0,0.1);}
+  .pill-mountain{color:var(--red); background:rgba(226,64,47,0.1);}
+  .pill-tt{color:var(--blue); background:rgba(111,147,173,0.1);}
+  .pill-rest{color:var(--rest); background:rgba(115,108,91,0.12);}
+  .hero-km{font-family:var(--font-mono); color:var(--muted); font-size:0.85rem;}
+  .hero-note{max-width:56ch; color:var(--muted); font-size:1rem; line-height:1.55; margin:0 0 30px;}
+
+  .countdown{display:flex; align-items:flex-end; gap:14px; margin-bottom:14px; flex-wrap:wrap;}
+  .cd-block{display:flex; flex-direction:column; align-items:center; min-width:64px;}
+  .cd-num{font-family:var(--font-mono); font-weight:600; font-size:clamp(2rem,6vw,3.3rem); font-variant-numeric:tabular-nums; line-height:1;}
+  .cd-label{font-family:var(--font-mono); font-size:0.62rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted-dim); margin-top:4px;}
+  .cd-sep{font-family:var(--font-mono); font-size:clamp(1.6rem,4vw,2.6rem); color:var(--muted-dim); padding-bottom:6px;}
+  .hero-start-time{font-family:var(--font-mono); font-size:0.78rem; color:var(--muted-dim);}
+  .hero-start-time span{color:var(--muted);}
+
+  /* ---------- progress track ---------- */
+  .progress-wrap{padding:26px 24px; border-bottom:1px solid var(--line); background:var(--bg-soft);}
+  .progress-label{font-family:var(--font-mono); font-size:0.68rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted-dim); margin:0 0 12px; text-align:center;}
+  .progress-track{position:relative; display:flex; align-items:center; max-width:1100px; margin:0 auto; overflow-x:auto; padding:6px 4px;}
+  .progress-line{position:absolute; left:0; right:0; top:50%; height:2px; background:var(--line); transform:translateY(-50%); z-index:0;}
+  .p-dot{
+    position:relative; z-index:1; width:9px; height:9px; border-radius:50%;
+    margin-right:16px; flex:0 0 auto; background:var(--muted-dim); cursor:default;
+  }
+  .p-dot:last-child{margin-right:0;}
+  .p-dot.rest{width:2px; height:16px; border-radius:1px; background:var(--rest);}
+  .p-dot.done{background:var(--muted-dim); opacity:0.5;}
+  .p-dot.current{width:16px; height:16px; box-shadow:0 0 0 4px rgba(255,209,0,0.18);}
+
+  /* ---------- stage list ---------- */
+  main{max-width:1100px; margin:0 auto; padding:56px 24px 20px;}
+  .section-title{
+    font-family:var(--font-display); text-transform:uppercase; font-size:clamp(1.6rem,4vw,2.3rem);
+    letter-spacing:0.5px; margin:0 0 26px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  }
+  .section-sub{font-family:var(--font-mono); font-size:0.75rem; letter-spacing:1px; color:var(--muted-dim); text-transform:none;}
+
+  .stage-list{display:flex; flex-direction:column; gap:10px;}
+  .stage-card{
+    display:grid;
+    grid-template-columns:44px 150px 1fr 90px 120px;
+    align-items:center; gap:18px;
+    background:var(--surface);
+    border-left:4px solid var(--muted-dim);
+    border-radius:var(--radius);
+    padding:16px 18px;
+  }
+  .stage-card.type-flat{border-left-color:var(--green);}
+  .stage-card.type-hilly{border-left-color:var(--yellow);}
+  .stage-card.type-mountain{border-left-color:var(--red);}
+  .stage-card.type-tt{border-left-color:var(--blue);}
+  .stage-card.finished{opacity:0.55;}
+  .stage-card.live{outline:1px solid rgba(226,64,47,0.4); background:var(--surface-2);}
+
+  .stage-num{font-family:var(--font-display); font-size:1.5rem; color:var(--muted-dim); text-align:center;}
+  .stage-date{display:flex; flex-direction:column;}
+  .stage-date .d{font-family:var(--font-mono); font-size:0.85rem; color:var(--cream);}
+  .stage-date .badge{font-family:var(--font-mono); font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted-dim); margin-top:3px;}
+  .stage-route{display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .stage-route .cities{font-family:var(--font-body); font-weight:600; font-size:1rem;}
+  .stage-route .cities .arrow{color:var(--yellow); margin:0 6px;}
+  .stage-route .blurb{font-size:0.82rem; color:var(--muted); line-height:1.4;}
+  .stage-side{display:flex; flex-direction:column; align-items:flex-start; gap:6px;}
+  .stage-km{font-family:var(--font-mono); font-size:0.78rem; color:var(--muted);}
+  .stage-profile svg{display:block; width:110px; height:32px;}
+  .stage-status{font-family:var(--font-mono); font-size:0.78rem; text-align:right; color:var(--muted);}
+  .stage-status .live-tag{color:var(--red);}
+  .stage-status .done-tag{color:var(--muted-dim);}
+
+  .rest-card{
+    display:flex; align-items:center; justify-content:center; gap:12px;
+    border:1px dashed var(--line); border-radius:var(--radius);
+    padding:12px; font-family:var(--font-mono); font-size:0.72rem; letter-spacing:2px;
+    text-transform:uppercase; color:var(--muted-dim);
+  }
+  .rest-card::before, .rest-card::after{content:""; flex:1; height:1px; background:var(--line); max-width:60px;}
+
+  @media (max-width:720px){
+    .stage-card{grid-template-columns:32px 1fr; grid-template-areas:"num route" "date route" "side side" "status status"; row-gap:8px;}
+    .stage-num{grid-area:num;}
+    .stage-route{grid-area:route;}
+    .stage-date{grid-area:date; flex-direction:row; gap:8px; align-items:center;}
+    .stage-side{grid-area:side; flex-direction:row; align-items:center; justify-content:space-between; width:100%;}
+    .stage-status{grid-area:status; text-align:left;}
+  }
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); margin-top:40px; padding:36px 24px 50px; background:var(--bg-soft);}
+  .legend{max-width:1100px; margin:0 auto 26px; display:flex; flex-wrap:wrap; gap:22px;}
+  .legend-item{display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:0.75rem; color:var(--muted);}
+  .legend-item .sw{width:10px; height:10px; border-radius:50%;}
+  .footer-note{max-width:1100px; margin:0 auto; font-size:0.8rem; color:var(--muted-dim); line-height:1.6;}
+  .footer-note strong{color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div>STAGE COUNTDOWN<small>GRAND TOUR 2026</small></div>
+  </div>
+  <nav class="site-nav">
+    <a href="#hero">Next Stage</a>
+    <a href="#route">Full Route</a>
+    <a href="#legend">Legend</a>
+  </nav>
+</header>
+
+<section class="hero" id="hero">
+  <svg class="hero-art" viewBox="0 0 800 400" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="400" fill="#17140f"/>
+    <circle cx="560" cy="150" r="100" fill="#ffd100" opacity="0.9"/>
+    <polygon points="0,260 120,150 230,230 340,120 460,240 560,140 660,220 800,160 800,400 0,400" fill="#2c2820"/>
+    <polygon points="0,300 150,210 280,280 420,190 560,290 700,200 800,250 800,400 0,400" fill="#211d17"/>
+    <path d="M400,400 C380,320 430,300 410,240 C395,195 440,180 425,140 C415,112 435,95 430,70" stroke="#f2ecdc" stroke-width="6" fill="none" opacity="0.55"/>
+    <path d="M400,400 C380,320 430,300 410,240 C395,195 440,180 425,140 C415,112 435,95 430,70" stroke="#17140f" stroke-width="6" stroke-dasharray="2 14" fill="none" opacity="0.6"/>
+    <circle class="rider-dot" cx="418" cy="205" r="4.5" fill="#e2402f"/>
+  </svg>
+  <div class="hero-fade"></div>
+  <div class="hero-content">
+    <p class="eyebrow"><span class="dot" id="hero-dot" style="background:var(--yellow)"></span><span id="hero-eyebrow-text">Loading…</span><span class="status-badge" id="hero-status" style="display:none;"></span></p>
+    <h1 class="hero-title" id="hero-title">—</h1>
+    <div class="hero-meta">
+      <span class="pill" id="hero-pill">—</span>
+      <span class="hero-km" id="hero-km">—</span>
+    </div>
+    <p class="hero-note" id="hero-note">—</p>
+    <div class="countdown" id="hero-countdown">
+      <div class="cd-block"><span class="cd-num" id="cd-d">00</span><span class="cd-label">Days</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><span class="cd-num" id="cd-h">00</span><span class="cd-label">Hours</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><span class="cd-num" id="cd-m">00</span><span class="cd-label">Mins</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><span class="cd-num" id="cd-s">00</span><span class="cd-label">Secs</span></div>
+    </div>
+    <p class="hero-start-time" id="hero-start-time">—</p>
+  </div>
+</section>
+
+<div class="progress-wrap">
+  <p class="progress-label">21 Stages · Barcelona → Paris</p>
+  <div class="progress-track">
+    <div class="progress-line"></div>
+    <div class="progress-track" id="progress-dots" style="overflow:visible;"></div>
+  </div>
+</div>
+
+<main id="route">
+  <h2 class="section-title">Full Route <span class="section-sub">113th edition · 4–26 July 2026</span></h2>
+  <div class="stage-list" id="stage-list"></div>
+</main>
+
+<footer id="legend">
+  <div class="legend">
+    <div class="legend-item"><span class="sw" style="background:var(--green)"></span>Flat — sprinters' day</div>
+    <div class="legend-item"><span class="sw" style="background:var(--yellow)"></span>Hilly — breakaway or GC skirmish</div>
+    <div class="legend-item"><span class="sw" style="background:var(--red)"></span>Mountain — climbers' terrain</div>
+    <div class="legend-item"><span class="sw" style="background:var(--blue)"></span>Time trial — against the clock</div>
+    <div class="legend-item"><span class="sw" style="background:var(--rest)"></span>Rest day</div>
+  </div>
+  <p class="footer-note">
+    <strong>About this page:</strong> Stage start times are estimated based on typical Tour de France schedules and are not official broadcast times — check letour.fr or your broadcaster for confirmed timing. Route, distances and stage types are drawn from the official 2026 route announcement.
+  </p>
+  <p class="footer-note" style="margin-top:14px;">
+    This is an independent fan project. Tour de France® is a trademark of Amaury Sport Organisation (A.S.O.). This website is not affiliated with, sponsored by, or endorsed by A.S.O.
+  </p>
+</footer>
+
+<script>
+const TYPE_COLOR = { flat:"var(--green)", hilly:"var(--yellow)", mountain:"var(--red)", tt:"var(--blue)" };
+const TYPE_LABEL = { flat:"Flat Stage", hilly:"Hilly Stage", mountain:"Mountain Stage", tt:"Time Trial" };
+
+const stages = [
+  {n:1, date:"Sat 4 Jul", start:"2026-07-04T15:05:00Z", durH:2.2, from:"Barcelona", to:"Barcelona", km:"19.7 km", type:"tt",
+   note:"Grand Départ team time trial through Barcelona, finishing atop Montjuïc.", result:"Visma-Lease a Bike won the stage; Jonas Vingegaard took the first yellow jersey."},
+  {n:2, date:"Sun 5 Jul", start:"2026-07-05T11:45:00Z", durH:4.5, from:"Tarragona", to:"Barcelona", km:"178 km", type:"hilly",
+   note:"A rolling run down the Catalan coast, climbing late to a finish at Montjuïc Castle — a day for the puncheurs."},
+  {n:3, date:"Mon 6 Jul", start:"2026-07-06T10:10:00Z", durH:5.5, from:"Granollers", to:"Les Angles", km:"196 km", type:"mountain",
+   note:"The race crosses into France and straight into the Pyrenees, with a summit finish after a brutal closing third."},
+  {n:4, date:"Tue 7 Jul", start:"2026-07-07T10:30:00Z", durH:4.7, from:"Carcassonne", to:"Foix", km:"182 km", type:"hilly",
+   note:"A lumpy transition through the Pyrenean foothills, mostly downhill late — built for a breakaway."},
+  {n:5, date:"Wed 8 Jul", start:"2026-07-08T11:15:00Z", durH:4.2, from:"Lannemezan", to:"Pau", km:"158 km", type:"flat",
+   note:"A calmer day between the mountains, likely to end in a bunch sprint into Pau."},
+  {n:6, date:"Thu 9 Jul", start:"2026-07-09T10:00:00Z", durH:5.5, from:"Pau", to:"Gavarnie-Gèdre", km:"186 km", type:"mountain",
+   note:"Back into the high Pyrenees for a summit finish at the Cirque de Gavarnie, via the Tourmalet and Col d'Aspin."},
+  {n:7, date:"Fri 10 Jul", start:"2026-07-10T11:15:00Z", durH:4.5, from:"Hagetmau", to:"Bordeaux", km:"175 km", type:"flat",
+   note:"Flat roads through the Landes forests to Bordeaux — a day for the sprinters after two hard mountain stages."},
+  {n:8, date:"Sat 11 Jul", start:"2026-07-11T11:15:00Z", durH:4.6, from:"Périgueux", to:"Bergerac", km:"182 km", type:"flat",
+   note:"Another likely bunch sprint, with lead-out trains looking to build on the previous day's momentum."},
+  {n:9, date:"Sun 12 Jul", start:"2026-07-12T11:00:00Z", durH:4.8, from:"Malemort", to:"Ussel", km:"185 km", type:"hilly",
+   note:"A bumpy stage through the Massif Central ahead of the first rest day — a good shot for the breakaway."},
+  {n:"R1", date:"Mon 13 Jul", rest:true, place:"Cantal"},
+  {n:10, date:"Tue 14 Jul", start:"2026-07-14T10:15:00Z", durH:4.8, from:"Aurillac", to:"Le Lioran", km:"167 km", type:"mountain",
+   note:"Rest day over, the race heads into the Massif Central for a mountain finish at Le Lioran on Bastille Day."},
+  {n:11, date:"Wed 15 Jul", start:"2026-07-15T11:15:00Z", durH:4.3, from:"Vichy", to:"Nevers", km:"161 km", type:"flat",
+   note:"A flat transfer stage, likely to end with the sprinters' teams back in control."},
+  {n:12, date:"Thu 16 Jul", start:"2026-07-16T11:15:00Z", durH:4.6, from:"Nevers (Magny-Cours)", to:"Chalon-sur-Saône", km:"181 km", type:"flat",
+   note:"Starting on the old Formula 1 circuit at Magny-Cours, a second straight flat stage for the fast finishers."},
+  {n:13, date:"Fri 17 Jul", start:"2026-07-17T09:45:00Z", durH:5.2, from:"Dole", to:"Belfort", km:"205 km", type:"hilly",
+   note:"The longest stage of the race, rolling and hilly on the way to Belfort — another day suited to a breakaway."},
+  {n:14, date:"Sat 18 Jul", start:"2026-07-18T10:15:00Z", durH:4.5, from:"Mulhouse", to:"Le Markstein Fellering", km:"155 km", type:"mountain",
+   note:"A short, sharp mountain stage in the Vosges, ending with a steep final push."},
+  {n:15, date:"Sun 19 Jul", start:"2026-07-19T10:00:00Z", durH:5.4, from:"Champagnole", to:"Plateau de Solaison", km:"184 km", type:"mountain",
+   note:"The last big mountain test before the second rest day, finishing at altitude on the Plateau de Solaison."},
+  {n:"R2", date:"Mon 20 Jul", rest:true, place:"Haute-Savoie"},
+  {n:16, date:"Tue 21 Jul", start:"2026-07-21T11:00:00Z", durH:6, from:"Évian-les-Bains", to:"Thonon-les-Bains", km:"26 km", type:"tt",
+   note:"The Tour's only individual time trial, tracing the shore of Lake Geneva — a pure test against the clock."},
+  {n:17, date:"Wed 22 Jul", start:"2026-07-22T11:15:00Z", durH:4.5, from:"Chambéry", to:"Voiron", km:"175 km", type:"flat",
+   note:"A largely flat run with the Alps looming — likely the sprinters' last real chance."},
+  {n:18, date:"Thu 23 Jul", start:"2026-07-23T10:45:00Z", durH:5.6, from:"Voiron", to:"Orcières-Merlette", km:"185 km", type:"mountain",
+   note:"Straight into the Alps for a summit finish at the Orcières-Merlette ski resort, scene of past Tour drama."},
+  {n:19, date:"Fri 24 Jul", start:"2026-07-24T12:15:00Z", durH:4.5, from:"Gap", to:"Alpe d'Huez", km:"128 km", type:"mountain",
+   note:"A short, explosive Alpine stage to the first of two finishes atop Alpe d'Huez's 21 hairpins."},
+  {n:20, date:"Sat 25 Jul", start:"2026-07-25T11:00:00Z", durH:5.3, from:"Le Bourg-d'Oisans", to:"Alpe d'Huez", km:"171 km", type:"mountain",
+   note:"Alpe d'Huez twice in a row for the first time in Tour history — the queen stage of the race."},
+  {n:21, date:"Sun 26 Jul", start:"2026-07-26T14:00:00Z", durH:5, from:"Thoiry", to:"Paris", km:"130 km", type:"flat",
+   note:"The Tour rolls into Paris for laps past Montmartre before the traditional sprint finish on the Champs-Élysées."},
+];
+
+// seeded RNG for elevation silhouettes
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function profileSVG(type, seed, tall){
+  const rand = mulberry32(seed * 97 + 13);
+  const w = 110, h = 32, base = h - 3;
+  const amp = { flat:[2,5], hilly:[6,13], mountain:[13,26], tt:[1,4] }[type] || [2,6];
+  const points = 8;
+  let pts = [];
+  for(let i=0;i<=points;i++){
+    const x = (w/points)*i;
+    let a = amp[0] + rand()*(amp[1]-amp[0]);
+    if(tall && i >= points-2) a *= 1.6; // summit finish kick near the end
+    const y = base - a;
+    pts.push([x,y]);
+  }
+  const line = pts.map(p=>p.join(",")).join(" ");
+  const fillPts = `0,${base} ` + line + ` ${w},${base}`;
+  const color = TYPE_COLOR[type] || "var(--muted-dim)";
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="${fillPts}" fill="${color}" opacity="0.18"/>
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function fmtLocal(iso){
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {weekday:"short", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"});
+}
+function fmtLocalDateTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {weekday:"short", month:"short", day:"numeric"}) + " · " +
+         d.toLocaleTimeString(undefined, {hour:"2-digit", minute:"2-digit"});
+}
+const tzLabel = Intl.DateTimeFormat().resolvedOptions().timeZone;
+function pad(n){ return String(Math.max(0,n)).toString().padStart(2,"0"); }
+
+function stageStatus(stage, now){
+  if(stage.rest) return "rest";
+  const start = new Date(stage.start).getTime();
+  const end = start + stage.durH*3600000;
+  if(now < start) return "upcoming";
+  if(now >= start && now <= end) return "live";
+  return "finished";
+}
+
+function renderStaticList(){
+  const list = document.getElementById("stage-list");
+  const dots = document.getElementById("progress-dots");
+  list.innerHTML = "";
+  dots.innerHTML = "";
+
+  stages.forEach(stage => {
+    if(stage.rest){
+      const card = document.createElement("div");
+      card.className = "rest-card";
+      card.textContent = `Rest Day — ${stage.place}`;
+      list.appendChild(card);
+
+      const dot = document.createElement("div");
+      dot.className = "p-dot rest";
+      dot.title = `Rest day — ${stage.place}`;
+      dots.appendChild(dot);
+      return;
+    }
+
+    const summit = /d'Huez|Gèdre|Lioran|Solaison|Merlette/.test(stage.to);
+    const card = document.createElement("div");
+    card.className = `stage-card type-${stage.type}`;
+    card.id = `stage-${stage.n}`;
+    card.innerHTML = `
+      <div class="stage-num">${stage.n}</div>
+      <div class="stage-date">
+        <span class="d" data-date>${stage.date}</span>
+        <span class="badge" data-badge></span>
+      </div>
+      <div class="stage-route">
+        <span class="cities">${stage.from}<span class="arrow">→</span>${stage.to}</span>
+        <span class="blurb">${stage.note}${stage.result ? " " + stage.result : ""}</span>
+      </div>
+      <div class="stage-side">
+        <span class="stage-km">${stage.km}</span>
+        <div class="stage-profile">${profileSVG(stage.type, stage.n, summit)}</div>
+      </div>
+      <div class="stage-status" data-status>—</div>
+    `;
+    list.appendChild(card);
+
+    const dot = document.createElement("div");
+    dot.className = "p-dot";
+    dot.title = `Stage ${stage.n}: ${stage.from} → ${stage.to}`;
+    dot.id = `dot-${stage.n}`;
+    dots.appendChild(dot);
+
+    card.querySelector("[data-date]").textContent = fmtLocalDateTime(stage.start);
+  });
+}
+
+function tick(){
+  const now = Date.now();
+  let nextStage = null, liveStage = null;
+
+  stages.forEach(stage => {
+    if(stage.rest) return;
+    const status = stageStatus(stage, now);
+    const card = document.getElementById(`stage-${stage.n}`);
+    const dot = document.getElementById(`dot-${stage.n}`);
+    const badge = card.querySelector("[data-badge]");
+    const statusEl = card.querySelector("[data-status]");
+
+    card.classList.remove("finished","live");
+    dot.classList.remove("done","current");
+
+    if(status === "finished"){
+      card.classList.add("finished");
+      dot.classList.add("done");
+      badge.textContent = "Finished";
+      statusEl.innerHTML = `<span class="done-tag">Finished</span>`;
+    } else if(status === "live"){
+      card.classList.add("live");
+      dot.classList.add("current");
+      badge.textContent = "Today";
+      statusEl.innerHTML = `<span class="live-tag">● On the road</span>`;
+      liveStage = liveStage || stage;
+    } else {
+      badge.textContent = "";
+      const start = new Date(stage.start).getTime();
+      const diff = start - now;
+      const days = Math.floor(diff/86400000);
+      const hours = Math.floor((diff%86400000)/3600000);
+      const mins = Math.floor((diff%3600000)/60000);
+      statusEl.textContent = days > 0 ? `in ${days}d ${hours}h` : `in ${hours}h ${mins}m`;
+      if(!nextStage) nextStage = stage;
+    }
+  });
+
+  const hero = liveStage || nextStage || stages[stages.length-1];
+  const isLive = !!liveStage;
+  const summit = /d'Huez|Gèdre|Lioran|Solaison|Merlette/.test(hero.to);
+
+  document.getElementById("hero-eyebrow-text").textContent = `Étape ${hero.n} · ${new Date(hero.start).toLocaleDateString(undefined, {weekday:"short", month:"short", day:"numeric"})}`;
+  document.getElementById("hero-dot").style.background = TYPE_COLOR[hero.type];
+  document.getElementById("hero-title").innerHTML = `${hero.from}<span class="arrow"> → </span>${hero.to}`;
+  const pill = document.getElementById("hero-pill");
+  pill.className = `pill pill-${hero.type}`;
+  pill.textContent = TYPE_LABEL[hero.type];
+  document.getElementById("hero-km").textContent = hero.km;
+  document.getElementById("hero-note").textContent = hero.note;
+  document.getElementById("hero-start-time").innerHTML = `Estimated start ${fmtLocal(hero.start)} <span>(${tzLabel})</span>`;
+
+  const statusBadge = document.getElementById("hero-status");
+  if(isLive){
+    statusBadge.style.display = "inline-flex";
+    statusBadge.classList.add("status-live");
+    statusBadge.innerHTML = `<span class="liveping"></span>On the road`;
+  } else {
+    statusBadge.style.display = "none";
+  }
+
+  const start = new Date(hero.start).getTime();
+  const end = start + hero.durH*3600000;
+  const target = isLive ? end : start;
+  const diff = Math.max(0, target - now);
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  document.getElementById("cd-d").textContent = pad(d);
+  document.getElementById("cd-h").textContent = pad(h);
+  document.getElementById("cd-m").textContent = pad(m);
+  document.getElementById("cd-s").textContent = pad(s);
+  document.querySelectorAll(".cd-label")[0].textContent = isLive ? "Days" : "Days";
+  document.querySelectorAll(".cd-label")[3].textContent = "Secs";
+  if(isLive){
+    document.getElementById("hero-start-time").innerHTML = `Estimated finish ${fmtLocal(new Date(end).toISOString())} <span>(${tzLabel})</span>`;
+  }
+}
+
+renderStaticList();
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
